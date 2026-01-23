@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Nexus - Merge, Compress, Convert PDF to PNG & PNG to PDF Free</title>
+    <title>PDF JIN - Merge, Compress, Convert PDF to PNG & PNG to PDF Free</title>
     <meta name="description"
         content="Free online PDF tools to merge PDFs, compress PDF size, convert PNG to PDF, and extract PDF pages to images. Secure client-side processing, no uploads required.">
     <meta name="keywords"
@@ -13,13 +13,13 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="PDF Nexus - Free PDF Merge, Compress & Converter">
+    <meta property="og:title" content="PDF JIN - Free PDF Merge, Compress & Converter">
     <meta property="og:description"
         content="Secure, fast, and free PDF tools. Merge, Compress, and Convert documents entirely in your browser.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="PDF Nexus - Free PDF Merge, Compress & Converter">
+    <meta property="twitter:title" content="PDF JIN - Free PDF Merge, Compress & Converter">
     <meta property="twitter:description"
         content="Secure, fast, and free PDF tools. Merge, Compress, and Convert documents entirely in your browser.">
     <link rel="stylesheet" href="style.css">
@@ -37,7 +37,7 @@
 
 <body>
     <header>
-        <div class="logo">PDF Nexus</div>
+        <div class="logo">PDF JIN</div>
         <nav>
             <!-- Navigation items if needed -->
         </nav>
@@ -51,40 +51,198 @@
                 <p>Secure, client-side PDF manipulation tools. No uploads, no waiting.</p>
             </div>
 
-            <div class="tools-grid">
-                <!-- PNG to PDF -->
-                <div class="tool-card" onclick="app.openTool('png-to-pdf')">
-                    <div class="tool-card-content">
-                        <div class="icon-wrapper">🖼️</div>
-                        <h3>PNG to PDF</h3>
-                        <p>Convert images into a single professional PDF document.</p>
+            <!-- ORGANIZE PDF -->
+            <div class="category-section">
+                <h2 class="category-title">📂 Organize PDF</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" onclick="app.openTool('pdf-merge')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">📎</div>
+                            <h3>Merge PDF</h3>
+                            <p>Combine multiple files into one.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('pdf-split')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">✂️</div>
+                            <h3>Split PDF</h3>
+                            <p>Separate pages into documents.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('pdf-remove')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">❌</div>
+                            <h3>Remove Pages</h3>
+                            <p>Delete unwanted pages.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('pdf-extract')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">�</div>
+                            <h3>Extract Pages</h3>
+                            <p>Get specific pages as a new PDF.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('pdf-organize')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">📑</div>
+                            <h3>Organize PDF</h3>
+                            <p>Sort and reorder pages.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('scan-pdf')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">📸</div>
+                            <h3>Scan to PDF</h3>
+                            <p>Capture images to PDF.</p>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- PDF Merge -->
-                <div class="tool-card" onclick="app.openTool('pdf-merge')">
-                    <div class="tool-card-content">
-                        <div class="icon-wrapper">📎</div>
-                        <h3>PDF Merge</h3>
-                        <p>Combine multiple PDF files into one seamless document.</p>
+            <!-- OPTIMIZE PDF -->
+            <div class="category-section">
+                <h2 class="category-title">⚡ Optimize PDF</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" onclick="app.openTool('pdf-compress')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">�</div>
+                            <h3>Compress PDF</h3>
+                            <p>Reduce file size.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('pdf-repair')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">🔧</div>
+                            <h3>Repair PDF</h3>
+                            <p>Fix damaged files.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('pdf-ocr')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">🔍</div>
+                            <h3>OCR PDF</h3>
+                            <p>Recognize text in sketches.</p>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- PDF Compressed -->
-                <div class="tool-card" onclick="app.openTool('pdf-compress')">
-                    <div class="tool-card-content">
-                        <div class="icon-wrapper">⚡</div>
-                        <h3>PDF Compress</h3>
-                        <p>Optimize file size for easier sharing.</p>
+            <!-- CONVERT TO PDF -->
+            <div class="category-section">
+                <h2 class="category-title">🔄 Convert to PDF</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" onclick="app.openTool('png-to-pdf')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">🖼️</div>
+                            <h3>JPG/PNG to PDF</h3>
+                            <p>Images to PDF.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('word-to-pdf')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">📝</div>
+                            <h3>WORD to PDF</h3>
+                            <p>Docx to PDF.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('ppt-to-pdf')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">📊</div>
+                            <h3>POWERPOINT to PDF</h3>
+                            <p>Slides to PDF.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('excel-to-pdf')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">📈</div>
+                            <h3>EXCEL to PDF</h3>
+                            <p>Sheets to PDF.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('html-to-pdf')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">🌐</div>
+                            <h3>HTML to PDF</h3>
+                            <p>Webpages to PDF.</p>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- PDF to PNG -->
-                <div class="tool-card" onclick="app.openTool('pdf-to-png')">
-                    <div class="tool-card-content">
-                        <div class="icon-wrapper">📸</div>
-                        <h3>PDF to PNG</h3>
-                        <p>Extract high-quality images from your PDF pages.</p>
+            <!-- CONVERT FROM PDF -->
+            <div class="category-section">
+                <h2 class="category-title">📤 Convert from PDF</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" onclick="app.openTool('pdf-to-jpg')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">🖼️</div>
+                            <h3>PDF to JPG/PNG</h3>
+                            <p>Extract images.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('pdf-to-word')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">📝</div>
+                            <h3>PDF to WORD</h3>
+                            <p>Editable docx.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('pdf-to-ppt')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">📊</div>
+                            <h3>PDF to POWERPOINT</h3>
+                            <p>Editable slides.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('pdf-to-excel')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">📈</div>
+                            <h3>PDF to EXCEL</h3>
+                            <p>Editable sheets.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('pdf-to-pdfa')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">🏛️</div>
+                            <h3>PDF to PDF/A</h3>
+                            <p>Archival format.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EDIT PDF -->
+            <div class="category-section">
+                <h2 class="category-title">✏️ Edit PDF</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" onclick="app.openTool('pdf-rotate')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">🔄</div>
+                            <h3>Rotate PDF</h3>
+                            <p>Fix page orientation.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('pdf-number')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">🔢</div>
+                            <h3>Add Page Numbers</h3>
+                            <p>Number your pages.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('pdf-watermark')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">💧</div>
+                            <h3>Add Watermark</h3>
+                            <p>Stamp your docs.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card" onclick="app.openTool('pdf-crop')">
+                        <div class="tool-card-content">
+                            <div class="icon-wrapper">✂️</div>
+                            <h3>Crop PDF</h3>
+                            <p>Trim margins.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -156,7 +314,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 PDF Nexus. All processing happens locally on your device.</p>
+        <p>&copy; 2026 PDF JIN. All processing happens locally on your device.</p>
     </footer>
 
     <script src="app.js"></script>
