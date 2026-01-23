@@ -1,0 +1,12 @@
+{
+  "name": "pdf-manager",
+  "version": "1.0.0",
+  "description": "PDF Tool Suite",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

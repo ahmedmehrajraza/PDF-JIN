@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Nexus - Advanced PDF Tools</title>
+    <meta name="description" content="Premium tools to merge, compress, and convert PDFs locally.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Load Libraries via CDN -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- PDF.js is loaded as module in main.js or separate script to handle worker correctly -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        // Set worker src immediately
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+</head>
+<body>
+    <header>
+        <div class="logo">PDF Nexus</div>
+        <nav>
+            <!-- Navigation items if needed -->
+        </nav>
+    </header>
+
+    <main id="main-container">
+        <!-- Landing View -->
+        <section id="landing-view">
+            <div class="hero">
+                <h1>Master Your Documents</h1>
+                <p>Secure, client-side PDF manipulation tools. No uploads, no waiting.</p>
+            </div>
+
+            <div class="tools-grid">
+                <!-- PNG to PDF -->
+                <div class="tool-card" onclick="app.openTool('png-to-pdf')">
+                    <div class="tool-card-content">
+                        <div class="icon-wrapper">🖼️</div>
+                        <h3>PNG to PDF</h3>
+                        <p>Convert images into a single professional PDF document.</p>
+                    </div>
+                </div>
+
+                <!-- PDF Merge -->
+                <div class="tool-card" onclick="app.openTool('pdf-merge')">
+                    <div class="tool-card-content">
+                        <div class="icon-wrapper">📎</div>
+                        <h3>PDF Merge</h3>
+                        <p>Combine multiple PDF files into one seamless document.</p>
+                    </div>
+                </div>
+
+                <!-- PDF Compressed -->
+                <div class="tool-card" onclick="app.openTool('pdf-compress')">
+                    <div class="tool-card-content">
+                        <div class="icon-wrapper">⚡</div>
+                        <h3>PDF Compress</h3>
+                        <p>Optimize file size for easier sharing.</p>
+                    </div>
+                </div>
+
+                <!-- PDF to PNG -->
+                <div class="tool-card" onclick="app.openTool('pdf-to-png')">
+                    <div class="tool-card-content">
+                        <div class="icon-wrapper">📸</div>
+                        <h3>PDF to PNG</h3>
+                        <p>Extract high-quality images from your PDF pages.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tool Workspaces -->
+        
+        <!-- PNG to PDF Workspace -->
+        <section id="png-to-pdf" class="workspace">
+            <div class="workspace-header">
+                <h2>PNG to PDF</h2>
+                <button class="back-btn" onclick="app.goHome()">← Back to Tools</button>
+            </div>
+            <div class="upload-area" id="drop-zone-png">
+                <p>Drag & Drop PNG images here or click to browse</p>
+                <input type="file" id="input-png" class="file-input" multiple accept="image/png, image/jpeg, image/jpg">
+            </div>
+            <div id="preview-png" class="preview-grid"></div>
+            <button id="btn-convert-png" class="action-btn" disabled>Generate PDF</button>
+        </section>
+
+        <!-- PDF Merge Workspace -->
+        <section id="pdf-merge" class="workspace">
+            <div class="workspace-header">
+                <h2>Merge PDFs</h2>
+                <button class="back-btn" onclick="app.goHome()">← Back to Tools</button>
+            </div>
+            <div class="upload-area" id="drop-zone-merge">
+                <p>Drag & Drop PDFs here or click to browse</p>
+                <input type="file" id="input-merge" class="file-input" multiple accept=".pdf">
+            </div>
+            <div id="list-merge" class="file-list"></div>
+            <button id="btn-merge" class="action-btn" disabled>Merge Files</button>
+        </section>
+
+        <!-- PDF Compress Workspace -->
+        <section id="pdf-compress" class="workspace">
+            <div class="workspace-header">
+                <h2>Compress PDF</h2>
+                <button class="back-btn" onclick="app.goHome()">← Back to Tools</button>
+            </div>
+            <div class="upload-area" id="drop-zone-compress">
+                <p>Drag & Drop PDF here or click to browse</p>
+                <input type="file" id="input-compress" class="file-input" accept=".pdf">
+            </div>
+            <div id="list-compress" class="file-list"></div>
+            <button id="btn-compress" class="action-btn" disabled>Optimize & Save</button>
+            <p style="margin-top:1rem; font-size:0.85rem; color:var(--text-secondary);">*Basic optimization: Removes unused objects and metadata.</p>
+        </section>
+
+        <!-- PDF to PNG Workspace -->
+        <section id="pdf-to-png" class="workspace">
+            <div class="workspace-header">
+                <h2>PDF to PNG</h2>
+                <button class="back-btn" onclick="app.goHome()">← Back to Tools</button>
+            </div>
+            <div class="upload-area" id="drop-zone-extract">
+                <p>Drag & Drop PDF here or click to browse</p>
+                <input type="file" id="input-extract" class="file-input" accept=".pdf">
+            </div>
+            <div id="list-extract" class="file-list"></div>
+            <div id="progress-extract" class="progress-container">
+                <div class="progress-bar" style="width: 0%"></div>
+            </div>
+            <button id="btn-extract" class="action-btn" disabled>Convert to PNGs</button>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 PDF Nexus. All processing happens locally on your device.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
