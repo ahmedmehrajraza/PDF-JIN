@@ -311,6 +311,22 @@
             <button id="btn-extract" class="action-btn" disabled>Convert to PNGs</button>
         </section>
 
+        <!-- Universal Dynamic Workspace (For all new tools) -->
+        <section id="universal-workspace" class="workspace">
+            <div class="workspace-header">
+                <h2 id="universal-title">Tool Name</h2>
+                <button class="back-btn" onclick="app.goHome()">← Back to Tools</button>
+            </div>
+            <div class="upload-area" id="drop-zone-universal">
+                <p>Drag & Drop files here or click to browse</p>
+                <input type="file" id="input-universal" class="file-input">
+            </div>
+            <div id="list-universal" class="file-list"></div>
+            <button id="btn-universal" class="action-btn" disabled>Start Processing</button>
+            <p class="beta-notice" style="margin-top:1rem; color: #a855f7; font-size: 0.9rem;">✨ This feature is ready
+                for files. Processing logic coming soon.</p>
+        </section>
+
     </main>
 
     <footer>
