@@ -1,10 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Nexus - Advanced PDF Tools</title>
-    <meta name="description" content="Premium tools to merge, compress, and convert PDFs locally.">
+    <title>PDF Nexus - Merge, Compress, Convert PDF to PNG & PNG to PDF Free</title>
+    <meta name="description"
+        content="Free online PDF tools to merge PDFs, compress PDF size, convert PNG to PDF, and extract PDF pages to images. Secure client-side processing, no uploads required.">
+    <meta name="keywords"
+        content="pdf merge, png to pdf, pdf compress, pdf to png, free pdf tools, merge pdf files, convert image to pdf, pdf compressor online">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="PDF Nexus - Free PDF Merge, Compress & Converter">
+    <meta property="og:description"
+        content="Secure, fast, and free PDF tools. Merge, Compress, and Convert documents entirely in your browser.">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="PDF Nexus - Free PDF Merge, Compress & Converter">
+    <meta property="twitter:description"
+        content="Secure, fast, and free PDF tools. Merge, Compress, and Convert documents entirely in your browser.">
     <link rel="stylesheet" href="style.css">
     <!-- Load Libraries via CDN -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
@@ -17,6 +34,7 @@
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     </script>
 </head>
+
 <body>
     <header>
         <div class="logo">PDF Nexus</div>
@@ -73,7 +91,7 @@
         </section>
 
         <!-- Tool Workspaces -->
-        
+
         <!-- PNG to PDF Workspace -->
         <section id="png-to-pdf" class="workspace">
             <div class="workspace-header">
@@ -114,7 +132,8 @@
             </div>
             <div id="list-compress" class="file-list"></div>
             <button id="btn-compress" class="action-btn" disabled>Optimize & Save</button>
-            <p style="margin-top:1rem; font-size:0.85rem; color:var(--text-secondary);">*Basic optimization: Removes unused objects and metadata.</p>
+            <p style="margin-top:1rem; font-size:0.85rem; color:var(--text-secondary);">*Basic optimization: Removes
+                unused objects and metadata.</p>
         </section>
 
         <!-- PDF to PNG Workspace -->
@@ -142,4 +161,5 @@
 
     <script src="app.js"></script>
 </body>
+
 </html>
