@@ -353,9 +353,11 @@ const app = {
         if (toolId === 'pdf-split') return this.processSplit();
         if (toolId === 'pdf-rotate') return this.processRotate();
         if (toolId === 'pdf-watermark') return this.processWatermark();
+        if (toolId === 'pdf-remove') return this.processRemove();
+        if (toolId === 'pdf-number') return this.processPageNumbers();
         // Add more routers here as we build them
 
-        alert(`The tool logic for "${this.toolConfig[toolId].title}" is being built! Stay tuned.`);
+        alert(`The feature "${this.toolConfig[toolId].title}" requires server-side processing which is not available in this offline version yet.`);
     },
 
     async processSplit() {
@@ -440,6 +442,78 @@ const app = {
 
             const pdfBytes = await pdfDoc.save();
             this.downloadBlob(pdfBytes, `watermarked-${file.name}`);
+        } catch (err) {
+            alert('Error: ' + err.message);
+        } finally {
+            btn.textContent = 'Start Processing';
+            btn.disabled = false;
+        }
+    },
+
+    async processRemove() {
+        const input = prompt("Enter page numbers to remove (comma separated, e.g. 1,3):");
+        if (!input) {
+            document.getElementById('btn-universal').disabled = false;
+            return;
+        }
+        const pagesToRemove = input.split(',').map(n => parseInt(n.trim()) - 1).filter(n => !isNaN(n));
+
+        const btn = document.getElementById('btn-universal');
+        btn.textContent = 'Removing...';
+        btn.disabled = true;
+
+        try {
+            const file = this.state.files['pdf-remove'][0];
+            const arrayBuffer = await file.arrayBuffer();
+            const { PDFDocument } = PDFLib;
+            const pdfDoc = await PDFDocument.load(arrayBuffer);
+
+            // Delete pages in reverse order to avoid index shifting problems
+            const sortedPages = pagesToRemove.sort((a, b) => b - a);
+            for (const p of sortedPages) {
+                if (p >= 0 && p < pdfDoc.getPageCount()) {
+                    pdfDoc.removePage(p);
+                }
+            }
+
+            const pdfBytes = await pdfDoc.save();
+            this.downloadBlob(pdfBytes, `removed-pages-${file.name}`);
+        } catch (err) {
+            alert('Error: ' + err.message);
+        } finally {
+            btn.textContent = 'Start Processing';
+            btn.disabled = false;
+        }
+    },
+
+    async processPageNumbers() {
+        const btn = document.getElementById('btn-universal');
+        btn.textContent = 'Numbering...';
+        btn.disabled = true;
+
+        try {
+            const file = this.state.files['pdf-number'][0];
+            const arrayBuffer = await file.arrayBuffer();
+            const { PDFDocument, rgb, StandardFonts } = PDFLib;
+            const pdfDoc = await PDFDocument.load(arrayBuffer);
+            const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+            const pages = pdfDoc.getPages();
+            const total = pages.length;
+
+            pages.forEach((page, idx) => {
+                const { width } = page.getSize();
+                page.drawText(`${idx + 1} / ${total}`, {
+                    x: width / 2 - 10,
+                    y: 20,
+                    size: 12,
+                    font: helveticaFont,
+                    color: rgb(0, 0, 0),
+                });
+            });
+
+            const pdfBytes = await pdfDoc.save();
+            this.downloadBlob(pdfBytes, `numbered-${file.name}`);
         } catch (err) {
             alert('Error: ' + err.message);
         } finally {
