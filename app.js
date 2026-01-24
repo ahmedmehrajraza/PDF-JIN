@@ -538,7 +538,7 @@ const app = {
 
             for (let i = 1; i <= totalPages; i++) {
                 const page = await pdf.getPage(i);
-                const viewport = page.getViewport({ scale: 2.0 });
+                const viewport = page.getViewport({ scale: 3.0 }); // Increased scale for better quality
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
                 canvas.height = viewport.height;
@@ -546,7 +546,8 @@ const app = {
 
                 await page.render({ canvasContext: context, viewport: viewport }).promise;
 
-                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.8));
+                // Maximum JPEG quality (1.0)
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 1.0));
                 zip.file(`page-${i}.jpg`, blob);
 
                 btn.textContent = `Converting ${i}/${totalPages}...`;
