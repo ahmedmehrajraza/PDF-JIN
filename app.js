@@ -355,6 +355,7 @@ const app = {
         if (toolId === 'pdf-watermark') return this.processWatermark();
         if (toolId === 'pdf-remove') return this.processRemove();
         if (toolId === 'pdf-number') return this.processPageNumbers();
+        if (toolId === 'pdf-to-jpg') return this.processPdfToJpg();
         // Add more routers here as we build them
 
         alert(`The feature "${this.toolConfig[toolId].title}" requires server-side processing which is not available in this offline version yet.`);
@@ -514,6 +515,45 @@ const app = {
 
             const pdfBytes = await pdfDoc.save();
             this.downloadBlob(pdfBytes, `numbered-${file.name}`);
+        } catch (err) {
+            alert('Error: ' + err.message);
+        } finally {
+            btn.textContent = 'Start Processing';
+            btn.disabled = false;
+        }
+    },
+
+    async processPdfToJpg() {
+        const btn = document.getElementById('btn-universal');
+        btn.textContent = 'Converting...';
+        btn.disabled = true;
+
+        try {
+            const file = this.state.files['pdf-to-jpg'][0];
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+
+            const zip = new JSZip();
+            const totalPages = pdf.numPages;
+
+            for (let i = 1; i <= totalPages; i++) {
+                const page = await pdf.getPage(i);
+                const viewport = page.getViewport({ scale: 2.0 });
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.8));
+                zip.file(`page-${i}.jpg`, blob);
+
+                btn.textContent = `Converting ${i}/${totalPages}...`;
+            }
+
+            const content = await zip.generateAsync({ type: "blob" });
+            saveAs(content, "converted-images.zip");
         } catch (err) {
             alert('Error: ' + err.message);
         } finally {
