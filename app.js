@@ -10,12 +10,16 @@ const app = {
     },
 
     init() {
+        this.thumbnailCache = new Map();
         this.setupNavigation();
         this.setupDragDrop();
         this.setupActionButtons();
 
         // Dynamic labels for tools
         this.toolConfig = {
+            'pdf-merge': { title: 'Merge PDF', accept: '.pdf' },
+            'pdf-compress': { title: 'Compress PDF', accept: '.pdf' },
+            'pdf-to-png': { title: 'PDF to PNG', accept: '.pdf' },
             'pdf-split': { title: 'Split PDF', accept: '.pdf' },
             'pdf-remove': { title: 'Remove Pages', accept: '.pdf' },
             'pdf-extract': { title: 'Extract Pages', accept: '.pdf' },
