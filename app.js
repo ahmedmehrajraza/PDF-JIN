@@ -157,9 +157,7 @@ const app = {
                 <div class="preview-card-wrapper draggable-item" draggable="true" data-index="${i}">
                     <img src="${URL.createObjectURL(f)}" class="preview-img" title="${f.name}">
                     <div class="preview-controls-overlay">
-                        <button class="mini-btn" onclick="app.moveFile('${toolId}', ${i}, -1)" ${i === 0 ? 'disabled' : ''}>◀</button>
                         <button class="mini-btn remove" onclick="app.removeFile('${toolId}', ${i})">×</button>
-                        <button class="mini-btn" onclick="app.moveFile('${toolId}', ${i}, 1)" ${i === files.length - 1 ? 'disabled' : ''}>▶</button>
                     </div>
                 </div>
             `).join('');
@@ -191,12 +189,9 @@ const app = {
     renderFileList(files, toolId) {
         return files.map((f, i) => `
             <div class="file-item draggable-item" draggable="true" data-index="${i}">
+                <div class="drag-handle">⠿</div>
                 <span class="file-name">${f.name}</span>
-                <div class="file-controls">
-                    <button class="move-btn" onclick="app.moveFile('${toolId}', ${i}, -1)" ${i === 0 ? 'disabled' : ''}>▲</button>
-                    <button class="move-btn" onclick="app.moveFile('${toolId}', ${i}, 1)" ${i === files.length - 1 ? 'disabled' : ''}>▼</button>
-                    <button class="remove-file" onclick="app.removeFile('${toolId}', ${i})">×</button>
-                </div>
+                <button class="remove-file" onclick="app.removeFile('${toolId}', ${i})">×</button>
             </div>
         `).join('');
     },

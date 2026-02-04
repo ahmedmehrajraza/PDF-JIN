@@ -461,46 +461,27 @@ footer {
     font-size: 0.95rem;
 }
 
-.file-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* Move Buttons in List */
-.move-btn {
-    background: transparent;
-    border: 1px solid var(--card-border);
+/* Drag Handle in List */
+.drag-handle {
+    cursor: grab;
     color: var(--text-secondary);
-    width: 28px;
-    height: 28px;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    transition: all 0.2s;
+    font-size: 1.2rem;
+    line-height: 1;
+    padding: 0 0.5rem;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    user-select: none;
 }
 
-.move-btn:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-primary);
-    border-color: rgba(255, 255, 255, 0.3);
+.file-item:hover .drag-handle {
+    opacity: 1;
 }
 
-.move-btn:disabled {
-    opacity: 0.2;
-    cursor: not-allowed;
-}
-
-/* Update Remove Button in List to match size if needed, or keep as icon */
+/* Update Remove Button in List */
 .remove-file {
-    /* Existing: color: #ef4444; */
-    /* Existing: cursor: pointer; */
     background: transparent;
-    border: 1px solid transparent;
-    /* invisible border for alignment */
+    border: none;
+    color: var(--text-secondary);
     width: 28px;
     height: 28px;
     border-radius: 4px;
@@ -509,6 +490,8 @@ footer {
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
+    cursor: pointer;
+    font-size: 1.2rem;
 }
 
 .remove-file:hover {
