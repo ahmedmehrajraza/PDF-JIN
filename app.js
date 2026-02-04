@@ -269,51 +269,90 @@ const app = {
     },
 
     setupDragSort(container, toolId) {
+        // 1. Setup Drop Zone on the Container itself (for dropping into empty space)
+        if (!container.dataset.hasDropListener) {
+            container.dataset.hasDropListener = 'true';
+
+            container.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                container.classList.add('dragover');
+            });
+
+            container.addEventListener('dragleave', (e) => {
+                // Only remove if leaving the container, not entering a child
+                if (e.relatedTarget && !container.contains(e.relatedTarget)) {
+                    container.classList.remove('dragover');
+                }
+            });
+
+            container.addEventListener('drop', (e) => {
+                e.preventDefault();
+                container.classList.remove('dragover');
+                // Allow dropping files directly into the list background
+                if (e.target === container || e.target.classList.contains('file-list') || e.target.classList.contains('preview-grid')) {
+                    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                        this.handleFiles(toolId, Array.from(e.dataTransfer.files));
+                    }
+                }
+            });
+        }
+
+        // 2. Setup Sorting on Individual Items
         const items = container.querySelectorAll('.draggable-item');
         items.forEach(item => {
+            // Prevent default drag for internal images so row dragging works
+            const img = item.querySelector('img');
+            if (img) img.setAttribute('draggable', 'false');
+
             item.addEventListener('dragstart', (e) => {
-                // If dragging a file from desktop, this won't fire. This fires for internal elements.
+                e.stopPropagation(); // Keep drag internal to this item
                 e.dataTransfer.effectAllowed = 'move';
                 e.dataTransfer.setData('text/plain', item.dataset.index);
                 item.classList.add('dragging');
                 this.state.dragStartIndex = parseInt(item.dataset.index);
             });
 
-            item.addEventListener('dragend', () => {
+            item.addEventListener('dragend', (e) => {
+                e.stopPropagation();
                 item.classList.remove('dragging');
                 container.querySelectorAll('.drag-over-target').forEach(el => el.classList.remove('drag-over-target'));
+                this.state.dragStartIndex = null;
             });
 
-            // Allow dropping on other items
             item.addEventListener('dragover', (e) => {
-                e.preventDefault(); // Necessary for drop to work
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Don't target self
                 if (item.classList.contains('dragging')) return;
+
+                // Visual feedback
                 item.classList.add('drag-over-target');
             });
 
-            item.addEventListener('dragleave', () => {
+            item.addEventListener('dragleave', (e) => {
+                e.stopPropagation();
                 item.classList.remove('drag-over-target');
             });
 
             item.addEventListener('drop', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 item.classList.remove('drag-over-target');
 
-                // Handle external file drops (Drag from Desktop to List Item)
+                // Case A: External File (Add)
                 if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
                     this.handleFiles(toolId, Array.from(e.dataTransfer.files));
                     return;
                 }
 
-                // Handle internal reordering
+                // Case B: Internal Sort (Reorder)
                 const fromIndex = this.state.dragStartIndex;
                 const toIndex = parseInt(item.dataset.index);
 
-                if (fromIndex !== undefined && !isNaN(fromIndex) && fromIndex !== toIndex) {
+                if (fromIndex !== null && fromIndex !== undefined && !isNaN(fromIndex) && fromIndex !== toIndex) {
                     this.reorderFiles(toolId, fromIndex, toIndex);
                 }
-                // Reset start index
-                this.state.dragStartIndex = undefined;
             });
         });
     },
