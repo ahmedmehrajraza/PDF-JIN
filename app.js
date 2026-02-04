@@ -269,7 +269,10 @@ const app = {
     },
 
     setupDragSort(container, toolId) {
-        // 1. Setup Drop Zone on the Container itself (for dropping into empty space)
+        // Update the toolId on the container so listeners use the current one
+        container.dataset.currentToolId = toolId;
+
+        // 1. Setup Drop Zone on the Container itself (Only once)
         if (!container.dataset.hasDropListener) {
             container.dataset.hasDropListener = 'true';
 
@@ -288,10 +291,14 @@ const app = {
             container.addEventListener('drop', (e) => {
                 e.preventDefault();
                 container.classList.remove('dragover');
+
+                // Use the toolId stored on the container
+                const activeToolId = container.dataset.currentToolId;
+
                 // Allow dropping files directly into the list background
                 if (e.target === container || e.target.classList.contains('file-list') || e.target.classList.contains('preview-grid')) {
                     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                        this.handleFiles(toolId, Array.from(e.dataTransfer.files));
+                        this.handleFiles(activeToolId, Array.from(e.dataTransfer.files));
                     }
                 }
             });
@@ -302,7 +309,11 @@ const app = {
         items.forEach(item => {
             // Prevent default drag for internal images so row dragging works
             const img = item.querySelector('img');
-            if (img) img.setAttribute('draggable', 'false');
+            if (img) {
+                img.setAttribute('draggable', 'false');
+                img.style.userSelect = 'none';
+                img.style.pointerEvents = 'none';
+            }
 
             item.addEventListener('dragstart', (e) => {
                 e.stopPropagation(); // Keep drag internal to this item
@@ -340,9 +351,12 @@ const app = {
                 e.stopPropagation();
                 item.classList.remove('drag-over-target');
 
+                // Use the toolId stored on the container
+                const activeToolId = container.dataset.currentToolId;
+
                 // Case A: External File (Add)
                 if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                    this.handleFiles(toolId, Array.from(e.dataTransfer.files));
+                    this.handleFiles(activeToolId, Array.from(e.dataTransfer.files));
                     return;
                 }
 
@@ -351,7 +365,7 @@ const app = {
                 const toIndex = parseInt(item.dataset.index);
 
                 if (fromIndex !== null && fromIndex !== undefined && !isNaN(fromIndex) && fromIndex !== toIndex) {
-                    this.reorderFiles(toolId, fromIndex, toIndex);
+                    this.reorderFiles(activeToolId, fromIndex, toIndex);
                 }
             });
         });
