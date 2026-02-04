@@ -272,6 +272,7 @@ const app = {
         const items = container.querySelectorAll('.draggable-item');
         items.forEach(item => {
             item.addEventListener('dragstart', (e) => {
+                // If dragging a file from desktop, this won't fire. This fires for internal elements.
                 e.dataTransfer.effectAllowed = 'move';
                 e.dataTransfer.setData('text/plain', item.dataset.index);
                 item.classList.add('dragging');
@@ -297,12 +298,22 @@ const app = {
             item.addEventListener('drop', (e) => {
                 e.preventDefault();
                 item.classList.remove('drag-over-target');
+
+                // Handle external file drops (Drag from Desktop to List Item)
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    this.handleFiles(toolId, Array.from(e.dataTransfer.files));
+                    return;
+                }
+
+                // Handle internal reordering
                 const fromIndex = this.state.dragStartIndex;
                 const toIndex = parseInt(item.dataset.index);
 
-                if (fromIndex !== undefined && fromIndex !== toIndex) {
+                if (fromIndex !== undefined && !isNaN(fromIndex) && fromIndex !== toIndex) {
                     this.reorderFiles(toolId, fromIndex, toIndex);
                 }
+                // Reset start index
+                this.state.dragStartIndex = undefined;
             });
         });
     },
