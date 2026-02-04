@@ -154,7 +154,7 @@ const app = {
             container = document.getElementById('preview-png');
             btn = document.getElementById('btn-convert-png');
             container.innerHTML = files.map((f, i) => `
-                <div class="preview-card-wrapper">
+                <div class="preview-card-wrapper draggable-item" draggable="true" data-index="${i}">
                     <img src="${URL.createObjectURL(f)}" class="preview-img" title="${f.name}">
                     <div class="preview-controls-overlay">
                         <button class="mini-btn" onclick="app.moveFile('${toolId}', ${i}, -1)" ${i === 0 ? 'disabled' : ''}>◀</button>
@@ -181,12 +181,16 @@ const app = {
             }
         }
 
+        if (container) {
+            this.setupDragSort(container, toolId);
+        }
+
         if (btn) btn.disabled = files.length === 0;
     },
 
     renderFileList(files, toolId) {
         return files.map((f, i) => `
-            <div class="file-item">
+            <div class="file-item draggable-item" draggable="true" data-index="${i}">
                 <span class="file-name">${f.name}</span>
                 <div class="file-controls">
                     <button class="move-btn" onclick="app.moveFile('${toolId}', ${i}, -1)" ${i === 0 ? 'disabled' : ''}>▲</button>
@@ -195,6 +199,52 @@ const app = {
                 </div>
             </div>
         `).join('');
+    },
+
+    setupDragSort(container, toolId) {
+        const items = container.querySelectorAll('.draggable-item');
+        items.forEach(item => {
+            item.addEventListener('dragstart', (e) => {
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', item.dataset.index);
+                item.classList.add('dragging');
+                this.state.dragStartIndex = parseInt(item.dataset.index);
+            });
+
+            item.addEventListener('dragend', () => {
+                item.classList.remove('dragging');
+                container.querySelectorAll('.drag-over-target').forEach(el => el.classList.remove('drag-over-target'));
+            });
+
+            // Allow dropping on other items
+            item.addEventListener('dragover', (e) => {
+                e.preventDefault(); // Necessary for drop to work
+                if (item.classList.contains('dragging')) return;
+                item.classList.add('drag-over-target');
+            });
+
+            item.addEventListener('dragleave', () => {
+                item.classList.remove('drag-over-target');
+            });
+
+            item.addEventListener('drop', (e) => {
+                e.preventDefault();
+                item.classList.remove('drag-over-target');
+                const fromIndex = this.state.dragStartIndex;
+                const toIndex = parseInt(item.dataset.index);
+
+                if (fromIndex !== undefined && fromIndex !== toIndex) {
+                    this.reorderFiles(toolId, fromIndex, toIndex);
+                }
+            });
+        });
+    },
+
+    reorderFiles(toolId, fromIndex, toIndex) {
+        const files = this.state.files[toolId];
+        const [movedItem] = files.splice(fromIndex, 1);
+        files.splice(toIndex, 0, movedItem);
+        this.updateUI(toolId);
     },
 
     moveFile(toolId, index, direction) {
