@@ -193,10 +193,13 @@ const app = {
     },
 
     renderFileList(files, toolId) {
+        // Generic PDF Placeholder (Base64 SVG)
+        const pdfPlaceholder = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOTRhM2I4IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTE0IDJINmEyIDIgMCAwIDAtMiAydjE2YTIgMiAwIDAgMCAyIDJoMTJhMiAyIDAgMCAwIDItMlY4eiI+PC9wYXRoPjxwb2x5bGluZSBwb2ludHM9IjE0IDIgMTQgOCAyMCA4Ij48L3BvbHlsaW5lPjxsaW5lIHgxPSIxNiIgeTE9IjEzIiB4Mj0iOCIgeTI9IjEzIj48L2xpbmU+PGxpbmUgeDE9IjE2IiB5MT0iMTciIHgyPSI4IiB5Mj0iMTciPjwvbGluZT48cG9seWxpbmUgcG9pbnRzPSIxMCA5IDkgOSA4IDkiPjwvcG9seWxpbmU+PC9zdmc+';
+
         return files.map((f, i) => `
             <div class="file-item draggable-item" draggable="true" data-index="${i}">
                 <div class="drag-handle">⠿</div>
-                <img id="thumb-${toolId}-${i}" class="file-thumbnail" src="" alt="PDF">
+                <img id="thumb-${toolId}-${i}" class="file-thumbnail" src="${this.thumbnailCache.get(f) || pdfPlaceholder}" alt="PDF Preview">
                 <span class="file-name">${f.name}</span>
                 <button class="remove-file" onclick="app.removeFile('${toolId}', ${i})">×</button>
             </div>
@@ -205,46 +208,64 @@ const app = {
 
     async loadThumbnails(toolId, files) {
         files.forEach(async (file, index) => {
-            if (file.type !== 'application/pdf') return; // Only process PDFs
+            // Check for PDF by type OR extension
+            if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) return;
+
+            // Check cache first
+            if (this.thumbnailCache.has(file)) return;
 
             const imgId = `thumb-${toolId}-${index}`;
             const imgEl = document.getElementById(imgId);
-            if (!imgEl) return;
 
-            // Use cached if available
-            if (this.thumbnailCache.has(file)) {
-                imgEl.src = this.thumbnailCache.get(file);
-                return;
-            }
-
-            // Generate thumbnail
             try {
                 const url = await this.generatePdfThumbnail(file);
                 this.thumbnailCache.set(file, url);
-                // Verify element still exists and matches file (in case of rapid UI updates)
+
+                // Update element if it still exists
                 const currentImgEl = document.getElementById(imgId);
                 if (currentImgEl) {
                     currentImgEl.src = url;
                 }
             } catch (err) {
-                console.error('Error generating thumbnail:', err);
-                imgEl.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI1NiIgdmlld0JveD0iMCAwIDQwIDU2IiBmaWxsPSJub25lIiBzdHJva2U9IiM5NGEzYjgiPjxyZWN0IHg9IjUiIHk9IjUiIHdpZHRoPSIzMCIgaGVpZ2h0PSI0NiIgcng9IjQiLz48cGF0aCBkPSJNMTUgMjVsNSA1IDUgLTUuLz48L3N2Zz4='; // Simple placeholder
+                console.warn('Thumbnail generation failed for', file.name, err);
+                // Keep placeholder
             }
         });
     },
 
     async generatePdfThumbnail(file) {
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-        const page = await pdf.getPage(1);
-        const viewport = page.getViewport({ scale: 0.5 }); // Thumbnail scale
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            // Use standard font for text rendering support in thumbnails
+            const loadingTask = pdfjsLib.getDocument({
+                data: arrayBuffer,
+                disableFontFace: false
+            });
+            const pdf = await loadingTask.promise;
+            const page = await pdf.getPage(1);
 
-        await page.render({ canvasContext: context, viewport: viewport }).promise;
-        return canvas.toDataURL();
+            // Calculate scale to fit our thumbnail size (approx 80px width)
+            const desiredWidth = 160; // 2x for retina sharpness
+            const viewport = page.getViewport({ scale: 1.0 });
+            const scale = desiredWidth / viewport.width;
+            const scaledViewport = page.getViewport({ scale });
+
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = scaledViewport.height;
+            canvas.width = scaledViewport.width;
+
+            await page.render({
+                canvasContext: context,
+                viewport: scaledViewport,
+                intent: 'display'
+            }).promise;
+
+            return canvas.toDataURL('image/jpeg', 0.8);
+        } catch (e) {
+            console.error(e);
+            throw e;
+        }
     },
 
     setupDragSort(container, toolId) {

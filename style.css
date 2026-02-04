@@ -480,15 +480,27 @@ footer {
 
 /* File Thumbnail */
 .file-thumbnail {
-    width: 40px;
-    height: 56px;
-    /* Approx A4 ratio */
-    object-fit: cover;
-    background: rgba(255, 255, 255, 0.1);
+    width: 80px;
+    /* Increased from 40px */
+    height: 112px;
+    /* Increased from 56px */
+    object-fit: contain;
+    /* changed to contain to show full page if possible, or cover */
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 4px;
     border: 1px solid var(--card-border);
-    margin-right: 1rem;
+    margin-right: 1.5rem;
     flex-shrink: 0;
+    transition: transform 0.2s;
+}
+
+.file-thumbnail:hover {
+    transform: scale(1.5);
+    /* Zoom on hover for better view */
+    z-index: 10;
+    position: relative;
+    border-color: #a855f7;
+    background: #1e293b;
 }
 
 /* Update Remove Button in List */
