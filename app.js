@@ -107,10 +107,23 @@ const app = {
         const dropZone = document.getElementById(zoneId);
         const input = document.getElementById(inputId);
 
-        dropZone.addEventListener('click', () => input.click());
+        // Prevent recursive click loop if input is inside dropZone
+        input.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        dropZone.addEventListener('click', (e) => {
+            // Only trigger input if we didn't click the input itself (avoid loop)
+            // and didn't click a button inside the zone (if any exist in future)
+            if (e.target !== input) {
+                input.click();
+            }
+        });
 
         input.addEventListener('change', (e) => {
-            this.handleFiles(toolKey, Array.from(e.target.files));
+            if (e.target.files && e.target.files.length > 0) {
+                this.handleFiles(toolKey, Array.from(e.target.files));
+            }
             input.value = '';
         });
 
@@ -124,7 +137,9 @@ const app = {
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
             dropZone.classList.remove('dragover');
-            this.handleFiles(toolKey, Array.from(e.dataTransfer.files));
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                this.handleFiles(toolKey, Array.from(e.dataTransfer.files));
+            }
         });
     },
 
