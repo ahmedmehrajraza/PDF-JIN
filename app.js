@@ -132,15 +132,49 @@ const app = {
         // If key is 'universal', we map it to current active tool
         const toolId = key === 'universal' ? this.state.activeTool : key;
 
+        // Validate MIME types based on tool config
+        const config = this.toolConfig[toolId];
+        let validFiles = newFiles;
+
+        if (config && config.accept && config.accept !== '*') {
+            const acceptedExtensions = config.accept.split(',').map(e => e.trim().toLowerCase());
+            const acceptedTypes = acceptedExtensions.map(ext => {
+                if (ext === '.pdf') return 'application/pdf';
+                if (ext.includes('image')) return 'image/';
+                return null;
+            }).filter(Boolean);
+
+            validFiles = newFiles.filter(file => {
+                const fileName = file.name.toLowerCase();
+                // Check extension
+                const hasValidExt = acceptedExtensions.some(ext => {
+                    if (ext.endsWith('/*')) return true; // e.g. image/*
+                    return fileName.endsWith(ext);
+                });
+
+                // Check mime type (looser check for images)
+                const hasValidType = acceptedTypes.some(type => {
+                    if (type.endsWith('/')) return file.type.startsWith(type);
+                    return file.type === type;
+                });
+
+                return hasValidExt || hasValidType;
+            });
+
+            if (validFiles.length < newFiles.length) {
+                alert(`Some files were skipped because they are not supported by the "${config.title}" tool.\nAllowed formats: ${config.accept}`);
+            }
+        }
+
         // Initialize state array if not exists
         if (!this.state.files[toolId]) {
             this.state.files[toolId] = [];
         }
 
         if (toolId === 'pdf-compress' || toolId === 'pdf-to-png') {
-            this.state.files[toolId] = [newFiles[0]].filter(Boolean);
+            this.state.files[toolId] = [validFiles[0]].filter(Boolean);
         } else {
-            this.state.files[toolId] = [...this.state.files[toolId], ...newFiles];
+            this.state.files[toolId] = [...this.state.files[toolId], ...validFiles];
         }
 
         this.updateUI(toolId);
@@ -462,16 +496,21 @@ const app = {
             const mergedPdf = await PDFDocument.create();
 
             for (const file of this.state.files['pdf-merge']) {
-                const arrayBuffer = await file.arrayBuffer();
-                const pdf = await PDFDocument.load(arrayBuffer);
-                const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-                copiedPages.forEach((page) => mergedPdf.addPage(page));
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await PDFDocument.load(arrayBuffer);
+                    const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                    copiedPages.forEach((page) => mergedPdf.addPage(page));
+                } catch (fileErr) {
+                    throw new Error(`Failed to process "${file.name}". Is it a valid, password-free PDF? (${fileErr.message})`);
+                }
             }
 
             const pdfBytes = await mergedPdf.save();
             this.downloadBlob(pdfBytes, 'merged.pdf');
         } catch (err) {
-            alert('Error creating merge: ' + err.message);
+            alert(err.message);
+            console.error(err);
         } finally {
             btn.textContent = 'Merge Files';
             btn.disabled = false;
