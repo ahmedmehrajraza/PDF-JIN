@@ -153,9 +153,16 @@ const app = {
         if (toolId === 'png-to-pdf') {
             container = document.getElementById('preview-png');
             btn = document.getElementById('btn-convert-png');
-            container.innerHTML = files.map((f) =>
-                `<img src="${URL.createObjectURL(f)}" class="preview-img" title="${f.name}">`
-            ).join('');
+            container.innerHTML = files.map((f, i) => `
+                <div class="preview-card-wrapper">
+                    <img src="${URL.createObjectURL(f)}" class="preview-img" title="${f.name}">
+                    <div class="preview-controls-overlay">
+                        <button class="mini-btn" onclick="app.moveFile('${toolId}', ${i}, -1)" ${i === 0 ? 'disabled' : ''}>◀</button>
+                        <button class="mini-btn remove" onclick="app.removeFile('${toolId}', ${i})">×</button>
+                        <button class="mini-btn" onclick="app.moveFile('${toolId}', ${i}, 1)" ${i === files.length - 1 ? 'disabled' : ''}>▶</button>
+                    </div>
+                </div>
+            `).join('');
         } else if (toolId === 'pdf-merge') {
             container = document.getElementById('list-merge');
             btn = document.getElementById('btn-merge');
@@ -180,10 +187,25 @@ const app = {
     renderFileList(files, toolId) {
         return files.map((f, i) => `
             <div class="file-item">
-                <span>${f.name}</span>
-                <button class="remove-file" onclick="app.removeFile('${toolId}', ${i})">&times;</button>
+                <span class="file-name">${f.name}</span>
+                <div class="file-controls">
+                    <button class="move-btn" onclick="app.moveFile('${toolId}', ${i}, -1)" ${i === 0 ? 'disabled' : ''}>▲</button>
+                    <button class="move-btn" onclick="app.moveFile('${toolId}', ${i}, 1)" ${i === files.length - 1 ? 'disabled' : ''}>▼</button>
+                    <button class="remove-file" onclick="app.removeFile('${toolId}', ${i})">×</button>
+                </div>
             </div>
         `).join('');
+    },
+
+    moveFile(toolId, index, direction) {
+        const files = this.state.files[toolId];
+        const newIndex = index + direction;
+
+        if (newIndex >= 0 && newIndex < files.length) {
+            // Swap
+            [files[index], files[newIndex]] = [files[newIndex], files[index]];
+            this.updateUI(toolId);
+        }
     },
 
     removeFile(toolId, index) {

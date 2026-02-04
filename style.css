@@ -50,6 +50,7 @@ header {
     font-weight: 700;
     background: var(--accent-gradient);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -0.02em;
 }
@@ -336,7 +337,150 @@ footer {
 .preview-img {
     width: 100%;
     height: 100px;
+    /* Fallback */
+    height: 100%;
     object-fit: cover;
     border-radius: 8px;
     border: 1px solid var(--card-border);
+    display: block;
+}
+
+/* --- New Styles for File Rearrangement & Previews --- */
+
+/* Image Preview Grid Item Wrapper */
+.preview-card-wrapper {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 1;
+    /* Keep it square-ish */
+}
+
+/* Overlay for Move/Remove buttons on Images */
+.preview-controls-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.7);
+    /* Dark semi-transparent */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    backdrop-filter: blur(2px);
+}
+
+.preview-card-wrapper:hover .preview-controls-overlay {
+    opacity: 1;
+}
+
+/* Mini Buttons (Image Overlay) */
+.mini-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.mini-btn:hover:not(:disabled) {
+    background: var(--accent-gradient);
+    border-color: transparent;
+    transform: scale(1.1);
+}
+
+.mini-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.mini-btn.remove:hover {
+    background: #ef4444;
+    /* Red for remove */
+}
+
+/* List View (PDF Merge, etc.) - File Item Updates */
+.file-item {
+    /* Existing: background: rgba(255, 255, 255, 0.05); */
+    /* Existing: padding: 0.8rem 1.2rem; */
+    /* Existing: border-radius: 8px; */
+    /* Existing: display: flex; */
+    /* Existing: justify-content: space-between; */
+    /* Existing: align-items: center; */
+    gap: 1rem;
+    /* Add gap between name and controls */
+}
+
+.file-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.95rem;
+}
+
+.file-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Move Buttons in List */
+.move-btn {
+    background: transparent;
+    border: 1px solid var(--card-border);
+    color: var(--text-secondary);
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.move-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.move-btn:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+}
+
+/* Update Remove Button in List to match size if needed, or keep as icon */
+.remove-file {
+    /* Existing: color: #ef4444; */
+    /* Existing: cursor: pointer; */
+    background: transparent;
+    border: 1px solid transparent;
+    /* invisible border for alignment */
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    display: flex;
+    /* Centering */
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.remove-file:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
 }
